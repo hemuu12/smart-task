@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
-import { Routes, Route, Link, useNavigate } from 'react-router-dom';
+import { Routes, Route, Link, useNavigate, Navigate } from 'react-router-dom';
 import { Sparkles, LogOut, LayoutDashboard, ListTodo } from 'lucide-react';
 import { authService } from './services/authService';
-import AuthForm from './components/AuthForm';
+import LoginPage from './pages/LoginPage';
+import SignupPage from './pages/SignupPage';
 import Dashboard from './components/Dashboard';
 import TasksPage from './pages/TasksPage';
 
@@ -15,6 +16,11 @@ function App() {
     const isAuth = await authService.checkAuth();
     setIsAuthenticated(isAuth);
     setAuthChecked(true);
+    
+    // Redirect to login if not authenticated and not on auth pages
+    if (!isAuth && window.location.pathname !== '/login' && window.location.pathname !== '/signup') {
+      navigate('/login');
+    }
   };
 
   useEffect(() => {
@@ -25,15 +31,12 @@ function App() {
     try {
       await authService.logout();
       setIsAuthenticated(false);
-      navigate('/');
+      navigate('/login');
     } catch (err) {
       console.error('Logout failed:', err);
+      setIsAuthenticated(false);
+      navigate('/login');
     }
-  };
-
-  const handleAuthSuccess = () => {
-    setIsAuthenticated(true);
-    navigate('/tasks');
   };
 
 
@@ -88,9 +91,26 @@ function App() {
 
       <div className={isAuthenticated ? 'py-6 px-4' : ''}>
         <Routes>
-          <Route path="/" element={!isAuthenticated ? <AuthForm onSuccess={handleAuthSuccess} /> : <TasksPage />} />
-          <Route path="/tasks" element={isAuthenticated ? <TasksPage /> : <AuthForm onSuccess={handleAuthSuccess} />} />
-          <Route path="/smartwork" element={isAuthenticated ? <Dashboard /> : <AuthForm onSuccess={handleAuthSuccess} />} />
+          <Route 
+            path="/" 
+            element={isAuthenticated ? <Navigate to="/tasks" replace /> : <Navigate to="/login" replace />} 
+          />
+          <Route 
+            path="/login" 
+            element={!isAuthenticated ? <LoginPage /> : <Navigate to="/tasks" replace />} 
+          />
+          <Route 
+            path="/signup" 
+            element={!isAuthenticated ? <SignupPage /> : <Navigate to="/tasks" replace />} 
+          />
+          <Route 
+            path="/tasks" 
+            element={isAuthenticated ? <TasksPage /> : <Navigate to="/login" replace />} 
+          />
+          <Route 
+            path="/smartwork" 
+            element={isAuthenticated ? <Dashboard /> : <Navigate to="/login" replace />} 
+          />
         </Routes>
       </div>
 
