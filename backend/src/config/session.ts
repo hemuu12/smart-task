@@ -18,19 +18,25 @@ const getPool = () => {
   return pool;
 };
 
-export const getSessionConfig = (): session.SessionOptions => ({
-  store: new PgSession({
-    pool: getPool(),
-    tableName: 'session',
-    createTableIfMissing: true,
-  }),
-  secret: process.env.SESSION_SECRET || 'your-secret-key-change-in-production',
-  resave: false,
-  saveUninitialized: false,
-  cookie: {
-    secure: process.env.NODE_ENV === 'production',
-    httpOnly: true,
-    maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
-    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
-  },
-});
+export const getSessionConfig = (): session.SessionOptions => {
+  const isProduction = process.env.NODE_ENV === 'production';
+  
+  return {
+    store: new PgSession({
+      pool: getPool(),
+      tableName: 'session',
+      createTableIfMissing: true,
+    }),
+    secret: process.env.SESSION_SECRET || 'your-secret-key-change-in-production',
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+      secure: isProduction,
+      httpOnly: true,
+      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+      sameSite: isProduction ? 'none' : 'lax',
+      domain: isProduction ? undefined : 'localhost',
+    },
+    proxy: isProduction,
+  };
+};
