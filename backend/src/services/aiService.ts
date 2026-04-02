@@ -18,7 +18,6 @@ export const generateTaskSummary = async (tasks: Task[]): Promise<string> => {
   }
 
   if (!process.env.GROQ_API_KEY) {
-    // Fallback to static summary if no API key
     return generateStaticSummary(tasks);
   }
 
@@ -52,9 +51,12 @@ Keep the briefing under 200 words.`;
       max_tokens: 500,
     });
 
+    console.log('✅ Groq API Response:', JSON.stringify(chatCompletion, null, 2));
+    console.log('📝 Generated Summary:', chatCompletion.choices[0]?.message?.content);
+
     return chatCompletion.choices[0]?.message?.content || generateStaticSummary(tasks);
   } catch (error) {
-    console.error('Groq API Error:', error);
+    console.error('❌ Groq API Error:', error);
     return generateStaticSummary(tasks);
   }
 };

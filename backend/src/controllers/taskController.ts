@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import prisma from '../services/prismaClient';
-import { generateTaskSummary } from '../services/geminiService';
+import { generateTaskSummary } from '../services/aiService';
 import { generateEmbedding } from '../services/vectorService';
 import { AuthRequest } from '../middleware/auth';
 
@@ -73,7 +73,7 @@ export const updateTask = async (
   next: NextFunction
 ) => {
   try {
-    const { id } = req.params;
+    const id = req.params.id as string;
     const { title, description, status, priority } = req.body;
     const userId = req.userId!;
 
@@ -122,7 +122,7 @@ export const deleteTask = async (
   next: NextFunction
 ) => {
   try {
-    const { id } = req.params;
+    const id = req.params.id as string;
     const userId = req.userId!;
 
     const task = await prisma.task.findUnique({

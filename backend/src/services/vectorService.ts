@@ -1,16 +1,36 @@
-import { GoogleGenAI } from '@google/genai';
+import { HfInference } from '@huggingface/inference';
 
-const genAI = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY || '' });
+const hf = new HfInference(process.env.HF_TOKEN || '', {
+  use_cache: false,
+});
 
 export const generateEmbedding = async (text: string): Promise<number[]> => {
+  if (!process.env.HF_TOKEN) {
+    console.log('Hugging Face token not configured. Skipping embedding generation.');
+    return [];
+  }
+
   try {
-    const result = await genAI.models.embedContent({
-      model: 'text-embedding-004',
-      content: text
+    // Using sentence-transformers/all-MiniLM-L6-v2 (384 dimensions)
+    // Free tier: 30,000 requests/month
+    const response = await hf.featureExtraction({
+      model: 'sentence-transformers/all-MiniLM-L6-v2',
+      inputs: text,
     });
-    return result.values || [];
+
+    // Handle different response types from FeatureExtractionOutput
+    if (Array.isArray(response)) {
+      // If it's a 2D array, flatten to 1D
+      if (Array.isArray(response[0])) {
+        return response[0] as number[];
+      }
+      // If it's already 1D array
+      return response as number[];
+    }
+    
+    return [];
   } catch (error) {
-    console.error('Error generating embedding:', error);
+    console.error('Error generating Hugging Face embedding:', error);
     return [];
   }
 };
