@@ -35,7 +35,6 @@ export const getSessionConfig = (): session.SessionOptions => {
       httpOnly: true,
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
       sameSite: isProduction ? 'none' : 'lax',
-      domain: isProduction ? undefined : 'localhost',
     },
     proxy: isProduction,
   };
