@@ -27,8 +27,6 @@ This application demonstrates full-stack development capabilities with:
 
 ### Bonus Features ✅
 - ✅ **Session-based authentication** (PostgreSQL session store)
-- ✅ **Vector database infrastructure** (embeddings support ready)
-- ✅ **RAG pattern** (semantic search capability)
 - ✅ User-specific task isolation
 - ✅ Responsive mobile-first design
 
@@ -369,7 +367,6 @@ VITE_API_URL=http://localhost:5000    # Backend API URL
 4. Add environment variables:
    - `DATABASE_URL` (Supabase connection string)
    - `GROQ_API_KEY`
-   - `HF_TOKEN` (optional)
    - `SESSION_SECRET`
    - `NODE_ENV=production`
    - `FRONTEND_URL=https://your-frontend.vercel.app`
@@ -440,8 +437,6 @@ This is a production-ready full-stack application demonstrating:
 ### Advanced Features
 - **Session-based Authentication**: Complete user registration/login system
 - **Protected Routes**: Middleware-based authentication on all task endpoints
-- **Vector Embeddings**: pgvector support for task vectorization (ready)
-- **RAG Pattern**: Infrastructure for semantic search and retrieval
 - **User Isolation**: Tasks filtered by userId, ensuring data privacy
 - **Session Management**: Automatic session handling with PostgreSQL store
 - **Production Deployment**: Vercel serverless deployment configuration
@@ -492,7 +487,6 @@ MIT License - feel free to use this project for learning or as a portfolio piece
 ## 🙏 Acknowledgments
 
 - Groq AI for fast, intelligent task summaries
-- Hugging Face for AI inference fallback
 - Prisma for excellent database tooling
 - Tailwind CSS for rapid UI development
 - Lucide for beautiful icons
