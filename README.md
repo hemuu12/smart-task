@@ -1,17 +1,18 @@
 # Smart Task Manager with AI Briefing
 
-> **Rubico Tech Full Stack Developer Technical Task**
+> **Production-Ready Full-Stack Application**
 
-A production-ready task management application with AI-powered daily briefings, featuring session-based authentication, PostgreSQL persistence, and real LLM integration.
+A modern task management application with AI-powered daily briefings, featuring session-based authentication, PostgreSQL persistence, and real LLM integration. Built with React, TypeScript, Express, and deployed on Vercel.
 
 ## 🎯 Project Overview
 
 This application demonstrates full-stack development capabilities with:
-- **Backend**: Express.js + TypeScript + Prisma + PostgreSQL
-- **Frontend**: React + TypeScript + Tailwind CSS
-- **AI Integration**: Groq API (Llama 3.3 70B) with fallback mechanism
-- **Authentication**: Session-based with HTTP-only cookies
-- **Database**: PostgreSQL with session storage
+- **Backend**: Express.js + TypeScript + Prisma + PostgreSQL + Session-based Auth
+- **Frontend**: React + TypeScript + Tailwind CSS + Vite
+- **AI Integration**: Groq API (Llama 3.3 70B) & Hugging Face Inference
+- **Authentication**: Session-based with HTTP-only cookies (SameSite=None for cross-origin)
+- **Database**: PostgreSQL with session storage and vector support
+- **Deployment**: Vercel (frontend) + Vercel Serverless (backend)
 
 ## ✨ Features
 
@@ -33,19 +34,23 @@ This application demonstrates full-stack development capabilities with:
 
 ### Core Features
 - ✅ **Task Management**: Create, view, and delete tasks with title, description, status, and priority
-- 🤖 **AI-Powered Briefings**: Get intelligent daily summaries of your pending tasks using Google Gemini Flash
-- 🎨 **Modern UI**: Beautiful, responsive interface built with React and Tailwind CSS
+- 🤖 **AI-Powered Briefings**: Get intelligent daily summaries using Groq AI (Llama 3.3 70B)
+- 🔐 **Session Authentication**: Secure login/signup with PostgreSQL session store
+- 🎨 **Modern UI**: Beautiful, responsive interface with separate login/signup pages
 - 🔒 **Type-Safe**: Full TypeScript implementation across frontend and backend
 - 📊 **Real-time Updates**: Instant task updates with proper error handling
 - 🎯 **Priority Management**: Organize tasks by low, medium, and high priority
 - 📱 **Responsive Design**: Works seamlessly on desktop and mobile devices
+- 🚀 **Production Ready**: Deployed on Vercel with cross-origin cookie support
 
-### 🎁 Bonus Features (Assessment Requirements)
-- 🔐 **JWT Authentication**: Secure user registration and login with bcrypt password hashing
-- 🗄️ **Vector Database**: Task embeddings stored in PostgreSQL for semantic search
-- 🧠 **RAG Pattern**: Retrieval-Augmented Generation for context-aware AI briefings
-- 👤 **User-Specific Data**: Each user sees only their own tasks
-- 🔑 **Token Management**: Automatic JWT token handling with interceptors
+### 🎁 Advanced Features
+- 🔐 **Session-based Authentication** (PostgreSQL session store with HTTP-only cookies)
+- 🗄️ **Vector Database Infrastructure** (pgvector for embeddings support)
+- 🧠 **RAG Pattern** (semantic search capability ready)
+- 👤 **User-Specific Data** (Each user sees only their own tasks)
+- 🌐 **Cross-Origin Support** (SameSite=None cookies for Vercel deployment)
+- 🔄 **Auto-Redirect Logic** (Smart routing based on authentication state)
+- 📝 **Separate Auth Pages** (Dedicated login and signup pages)
 
 ## 🛠️ Tech Stack
 
@@ -53,11 +58,12 @@ This application demonstrates full-stack development capabilities with:
 - **Node.js** with **Express.js** - REST API server
 - **TypeScript** - Type-safe backend code
 - **Prisma** - Modern ORM for database management
-- **PostgreSQL** - Production-grade relational database
-- **Google Gemini AI** - AI-powered task summaries & embeddings
+- **PostgreSQL** - Production-grade relational database (Supabase)
+- **Groq AI** - AI-powered task summaries (Llama 3.3 70B)
+- **Hugging Face** - Alternative AI inference
 - **Zod** - Runtime validation
-- **JWT (jsonwebtoken)** - Secure authentication tokens
-- **bcryptjs** - Password hashing and verification
+- **express-session** - Session-based authentication
+- **connect-pg-simple** - PostgreSQL session store
 - **pgvector** - Vector similarity search support
 
 ### Frontend
@@ -74,16 +80,17 @@ Before you begin, ensure you have installed:
 - **Node.js** v20 or higher ([Download](https://nodejs.org/))
 - **PostgreSQL** v14 or higher ([Download](https://www.postgresql.org/download/))
 - **npm** (comes with Node.js)
-- **Git** ([Download](https://git-scm.com/)) or use Docker
-- **Google Gemini API Key** (free tier available)
+- **Git** ([Download](https://git-scm.com/))
+- **Groq API Key** (free tier available at [console.groq.com](https://console.groq.com/))
+- **Hugging Face Token** (optional, for fallback AI at [huggingface.co](https://huggingface.co/))
 
 ## 🔧 Installation & Setup
 
 ### 1. Clone the Repository
 
 ```bash
-git clone <your-repository-url>
-cd test
+git clone https://github.com/hemuu12/smart-task.git
+cd smart-task
 ```
 
 ### 2. Database Setup
@@ -121,20 +128,28 @@ Edit `backend/.env` with your credentials:
 
 ```env
 DATABASE_URL="postgresql://postgres:password@localhost:5432/taskmanager?schema=public"
-GEMINI_API_KEY=your_actual_gemini_api_key_here
-JWT_SECRET=your_super_secret_jwt_key_change_this_in_production
-JWT_EXPIRES_IN=7d
+GROQ_API_KEY=gsk_your_actual_groq_api_key_here
+HF_TOKEN=your_huggingface_token_here
+SESSION_SECRET=your_super_secret_session_key_change_this_in_production
 PORT=5000
 NODE_ENV=development
+FRONTEND_URL=http://localhost:3000
 ```
 
-**### 3. Get Your Groq API Key (Free)
+### 4. Get Your API Keys
 
+**Groq API Key (Required)**
 1. Visit [Groq Console](https://console.groq.com/)
 2. Sign up for a free account
 3. Navigate to API Keys section
 4. Create a new API key
 5. Copy your key (starts with `gsk_...`)
+
+**Hugging Face Token (Optional)**
+1. Visit [Hugging Face](https://huggingface.co/)
+2. Sign up and go to Settings → Access Tokens
+3. Create a new token
+4. Copy your token (starts with `hf_...`)
 
 **Note**: Groq offers free tier with fast inference. The app also works without an API key (uses static summary fallback).
 
@@ -166,21 +181,24 @@ cp .env.example .env
 npm run dev
 ```
 
-✅ Frontend running at `http://localhost:3000`
+Frontend running at `http://localhost:3000`
 
-### 6. Access the Application
+### 5. Access the Application
 
 1. Open browser to `http://localhost:3000`
-2. Register a new account
-3. Start creating tasks
-4. Click "Generate Briefing" to see AI-powered summary**
+2. You'll be redirected to `/login` if not authenticated
+3. Register a new account at `/signup`
+4. Login with your credentials
+5. Start creating tasks and generating AI briefings
 
 ## 💻 Usage Guide
 
-### Authentication
-1. **Register**: Create account with email and password
-2. **Login**: Access your personal task workspace
-3. **Logout**: Securely end your session
+### Authentication Flow
+1. **Register**: Visit `/signup` to create account
+2. **Login**: Visit `/login` to sign in
+3. **Auto-Redirect**: Authenticated users auto-redirect to `/tasks`
+4. **Session Management**: Cookies stored with SameSite=None for cross-origin
+5. **Logout**: Ends session and redirects to `/login`
 
 ### Task Management
 1. **Create Task**: Click "Add Task" button
@@ -209,21 +227,9 @@ npm run dev
 ### Authentication (Public)
 
 - **POST** `/api/auth/register` - Create new user account
-  ```json
-  {
-    "email": "user@example.com",
-    "password": "securepassword",
-    "name": "John Doe"
-  }
-  ```
-
-- **POST** `/api/auth/login` - Sign in and get JWT token
-  ```json
-  {
-    "email": "user@example.com",
-    "password": "securepassword"
-  }
-  ```
+- **POST** `/api/auth/login` - Sign in and create session
+- **POST** `/api/auth/logout` - End session
+- **GET** `/api/auth/me` - Check authentication status
 
 ### Tasks (Protected - Requires JWT)
 
@@ -245,19 +251,20 @@ npm run dev
 
 - **GET** `/health` - Check API status
 
-**Authentication:** Include JWT token in header:
+**Authentication**: Uses session cookies (HTTP-only, SameSite=None, Secure)
 ```
-Authorization: Bearer <your_jwt_token>
+Cookie: connect.sid=...; HttpOnly; Secure; SameSite=None
 ```
 
 ## 🗂️ Project Structure
 
 ```
-test/
+smart-task/
 ├── backend/
 │   ├── prisma/
 │   │   └── schema.prisma          # Database schema
 │   ├── src/
+│   │   ├── config/                # Session configuration
 │   │   ├── controllers/           # Request handlers
 │   │   ├── middleware/            # Express middleware
 │   │   ├── routes/                # API routes
@@ -265,13 +272,15 @@ test/
 │   │   └── index.ts               # Entry point
 │   ├── package.json
 │   ├── tsconfig.json
+│   ├── vercel.json                # Vercel deployment config
 │   └── .env.example
 ├── frontend/
 │   ├── src/
 │   │   ├── components/            # React components
+│   │   ├── pages/                 # Page components (Login, Signup, Tasks)
 │   │   ├── services/              # API client
 │   │   ├── types/                 # TypeScript types
-│   │   ├── App.tsx                # Main app component
+│   │   ├── App.tsx                # Main app component with routing
 │   │   └── main.tsx               # Entry point
 │   ├── package.json
 │   ├── vite.config.ts
@@ -320,77 +329,97 @@ npm run lint
 
 ## 🎨 AI Prompt Engineering
 
-The AI briefing feature uses a carefully crafted prompt that:
+The AI briefing feature uses carefully crafted prompts that:
 - Summarizes total workload and task breakdown
 - Highlights urgent/high-priority items
 - Provides motivational insights
 - Offers productivity tips
 - Maintains a professional yet encouraging tone
 
-The prompt can be customized in `backend/src/services/geminiService.ts`
+The prompts can be customized in `backend/src/services/groqService.ts` and `backend/src/services/hfService.ts`
 
 ## 🔒 Environment Variables
 
 ### Backend (.env)
 
 ```env
-DATABASE_URL="file:./dev.db"        # SQLite database path
-GEMINI_API_KEY=your_key_here        # Google Gemini API key
-PORT=5000                            # Server port
-NODE_ENV=development                 # Environment
+DATABASE_URL=postgresql://...           # PostgreSQL connection string
+GROQ_API_KEY=gsk_...                   # Groq API key
+HF_TOKEN=hf_...                         # Hugging Face token (optional)
+SESSION_SECRET=your_secret_key         # Session encryption key
+PORT=5000                               # Server port
+NODE_ENV=development                    # Environment
+FRONTEND_URL=http://localhost:3000     # Frontend URL for CORS
 ```
 
 ### Frontend (.env)
 
 ```env
-VITE_API_URL=http://localhost:5000  # Backend API URL
+VITE_API_URL=http://localhost:5000    # Backend API URL
 ```
 
-## 🚢 Deployment
+## � Deployment
 
-### Backend Deployment (Railway/Render/Heroku)
+### Vercel Deployment (Recommended)
 
+**Backend Deployment**
 1. Push code to GitHub
-2. Connect repository to your platform
-3. Set environment variables
-4. For PostgreSQL, update `DATABASE_URL` in schema.prisma:
-   ```prisma
-   datasource db {
-     provider = "postgresql"
-     url      = env("DATABASE_URL")
-   }
-   ```
-5. Run migrations: `npx prisma migrate deploy`
+2. Connect repository to [Vercel](https://vercel.com/)
+3. Set root directory to `backend`
+4. Add environment variables:
+   - `DATABASE_URL` (Supabase connection string)
+   - `GROQ_API_KEY`
+   - `HF_TOKEN` (optional)
+   - `SESSION_SECRET`
+   - `NODE_ENV=production`
+   - `FRONTEND_URL=https://your-frontend.vercel.app`
+5. Deploy
 
-### Frontend Deployment (Vercel/Netlify)
+**Frontend Deployment**
+1. Connect same repository to Vercel
+2. Set root directory to `frontend`
+3. Add environment variable:
+   - `VITE_API_URL=https://your-backend.vercel.app`
+4. Deploy
 
-1. Push code to GitHub
-2. Connect repository
-3. Set build command: `npm run build`
-4. Set output directory: `dist`
-5. Add environment variable: `VITE_API_URL=<your-backend-url>`
+### Database Setup (Supabase)
+1. Create account at [Supabase](https://supabase.com/)
+2. Create new project
+3. Get connection string from Settings → Database
+4. Use pooler URL with `?pgbouncer=true` for serverless
+5. Run migrations automatically via Vercel build
 
 ## 🐛 Troubleshooting
 
 ### Backend won't start
 - Ensure all dependencies are installed: `npm install`
 - Check if port 5000 is available
-- Verify `.env` file exists with valid API key
+- Verify `.env` file exists with valid API keys
+- Run `npx prisma generate` to create Prisma client
 
 ### Frontend won't connect to backend
 - Ensure backend is running on port 5000
 - Check CORS settings in `backend/src/index.ts`
 - Verify proxy settings in `frontend/vite.config.ts`
+- Check `VITE_API_URL` in frontend `.env`
 
 ### AI Briefing fails
-- Verify your Gemini API key is valid
+- Verify your Groq API key is valid
 - Check API key has not exceeded rate limits
 - Ensure you have internet connection
+- Try Hugging Face fallback if Groq fails
+
+### Cookie Issues (Production)
+- Ensure `NODE_ENV=production` is set in Vercel
+- Check `SameSite=None` and `Secure=true` in session config
+- Verify `FRONTEND_URL` matches your Vercel domain
+- Check `trust proxy` is enabled in Express
 
 ### Database errors
 - Run `npx prisma generate` to regenerate Prisma client
 - Run `npx prisma migrate dev` to apply migrations
-- Delete `dev.db` and re-run migrations for fresh start
+- Check PostgreSQL connection string format
+- Use Supabase pooler URL with `?pgbouncer=true`
 
 ## 📝 What I Built
 
@@ -402,26 +431,29 @@ This is a production-ready full-stack application demonstrating:
 - **Error Handling**: Comprehensive error handling on both frontend and backend
 - **Validation**: Input validation using Zod schemas
 - **Modern UI/UX**: Responsive design with loading states and user feedback
-- **Real AI Integration**: Actual Google Gemini API calls (not mocked)
+- **Real AI Integration**: Groq AI API calls with Hugging Face fallback
 - **Database Management**: Prisma ORM with PostgreSQL and migrations
-- **Best Practices**: ESLint, proper project structure, environment variables
+- **Session Authentication**: Secure HTTP-only cookie-based sessions
+- **Cross-Origin Support**: SameSite=None cookies for Vercel deployment
+- **Smart Routing**: Automatic redirects based on authentication state
 
-### Bonus Features (Assessment Requirements)
-- **JWT Authentication**: Complete user registration/login system with bcrypt
+### Advanced Features
+- **Session-based Authentication**: Complete user registration/login system
 - **Protected Routes**: Middleware-based authentication on all task endpoints
-- **Vector Embeddings**: Google Gemini embedding-001 model for task vectorization
-- **RAG Pattern**: Context retrieval using cosine similarity for enhanced AI responses
+- **Vector Embeddings**: pgvector support for task vectorization (ready)
+- **RAG Pattern**: Infrastructure for semantic search and retrieval
 - **User Isolation**: Tasks filtered by userId, ensuring data privacy
-- **Token Management**: Automatic JWT injection via Axios interceptors
-- **Session Handling**: Logout functionality with token cleanup
+- **Session Management**: Automatic session handling with PostgreSQL store
+- **Production Deployment**: Vercel serverless deployment configuration
 
 ## 🔄 Trade-offs & Future Improvements
 
 ### Trade-offs Made
-- **Embedding Storage**: JSON strings in PostgreSQL (could use dedicated vector DB like Pinecone)
-- **Simple RAG**: Cosine similarity only (could add more sophisticated retrieval)
+- **Session vs JWT**: Used session-based auth for simpler cookie management
+- **Embedding Storage**: JSON strings in PostgreSQL (could use dedicated vector DB)
+- **Simple RAG**: Basic infrastructure ready (could add sophisticated retrieval)
 - **No Task Editing**: Only create/delete (can add update endpoint)
-- **Basic UI**: Functional and modern but not pixel-perfect (can enhance)
+- **UI Framework**: Tailwind CSS (could use component library like shadcn/ui)
 
 ### Future Improvements
 - � Due dates and calendar integration
@@ -448,19 +480,26 @@ This project was built following modern best practices:
 - Real AI integration with proper error handling
 - Responsive design for all screen sizes
 
+## 🌟 Live Demo
+
+**Frontend**: [smart-task-chi.vercel.app](https://smart-task-chi.vercel.app)
+**Backend**: [smart-task-xws9.vercel.app](https://smart-task-xws9.vercel.app)
+
 ## 📄 License
 
 MIT License - feel free to use this project for learning or as a portfolio piece.
 
 ## 🙏 Acknowledgments
 
-- Google Gemini AI for intelligent task summaries
+- Groq AI for fast, intelligent task summaries
+- Hugging Face for AI inference fallback
 - Prisma for excellent database tooling
 - Tailwind CSS for rapid UI development
 - Lucide for beautiful icons
+- Vercel for seamless deployment
 
 ---
 
-**Built for Rubico Tech Technical Assessment**
+**Built with ❤️ using modern web technologies**
 
-For questions or issues, please contact the repository owner.
+For questions or issues, please visit the [GitHub repository](https://github.com/hemuu12/smart-task).
