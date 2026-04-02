@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { LogIn, UserPlus, Loader2, CheckCircle } from 'lucide-react';
+import { LogIn, UserPlus, Loader2 } from 'lucide-react';
 import { authService } from '../services/authService';
 import { LoginDto, RegisterDto } from '../types/auth';
 
@@ -11,7 +11,6 @@ export default function AuthForm({ onSuccess }: AuthFormProps) {
   const [isLogin, setIsLogin] = useState(true);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -21,7 +20,6 @@ export default function AuthForm({ onSuccess }: AuthFormProps) {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
-    setSuccessMessage(null);
     setLoading(true);
 
     try {
@@ -39,12 +37,10 @@ export default function AuthForm({ onSuccess }: AuthFormProps) {
           name: formData.name || undefined
         };
         await authService.register(data);
-        setSuccessMessage('Account created successfully! Please sign in.');
         setFormData({ email: formData.email, password: '', name: '' });
         setTimeout(() => {
           setIsLogin(true);
-          setSuccessMessage(null);
-        }, 2000);
+        }, 1500);
       }
     } catch (err: any) {
       setError(err.response?.data?.message || 'Authentication failed. Please try again.');
