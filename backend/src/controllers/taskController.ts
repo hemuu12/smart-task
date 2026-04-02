@@ -1,7 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import prisma from '../services/prismaClient';
 import { generateTaskSummary } from '../services/aiService';
-import { generateEmbedding } from '../services/vectorService';
 import { AuthRequest } from '../middleware/auth';
 
 export const createTask = async (

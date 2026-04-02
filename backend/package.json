@@ -16,8 +16,6 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "groq-sdk": "^0.3.0",
-    "@huggingface/inference": "^2.8.1",
     "@prisma/client": "^5.22.0",
     "bcryptjs": "^2.4.3",
     "connect-pg-simple": "^9.0.1",
@@ -25,6 +23,7 @@
     "dotenv": "^16.4.5",
     "express": "^4.21.2",
     "express-session": "^1.19.0",
+    "groq-sdk": "^0.3.0",
     "pg": "^8.11.3",
     "pgvector": "^0.2.0",
     "zod": "^3.23.8"
