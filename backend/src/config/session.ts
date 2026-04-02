@@ -19,7 +19,8 @@ const getPool = () => {
 };
 
 export const getSessionConfig = (): session.SessionOptions => {
-  const isProduction = process.env.NODE_ENV === 'production';
+  // Check if running on Vercel or in production
+  const isProduction = process.env.NODE_ENV === 'production' || process.env.VERCEL === '1';
   
   return {
     store: new PgSession({
