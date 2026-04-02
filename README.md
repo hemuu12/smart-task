@@ -482,8 +482,8 @@ This project was built following modern best practices:
 
 ## 🌟 Live Demo
 
-**Frontend**: [smart-task-chi.vercel.app](https://smart-task-chi.vercel.app)
-**Backend**: [smart-task-xws9.vercel.app](https://smart-task-xws9.vercel.app)
+**Frontend**: [smart-task-chi.vercel.app](https://smart-task-3gwn.vercel.app)
+**Backend**: [smart-task-xws9.vercel.app](https://smart-task-chi.vercel.app/)
 
 ## 📄 License
 
