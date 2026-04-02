@@ -5,7 +5,7 @@ import session from 'express-session';
 import authRoutes from './routes/authRoutes';
 import taskRoutes from './routes/taskRoutes';
 import { errorHandler } from './middleware/errorHandler';
-import { sessionConfig } from './config/session';
+import { getSessionConfig } from './config/session';
 
 dotenv.config();
 
@@ -31,7 +31,7 @@ const corsOptions: CorsOptions = {
 
 app.use(cors(corsOptions));
 app.use(express.json());
-app.use(session(sessionConfig));
+app.use(session(getSessionConfig()));
 
 app.get('/', (req, res) => {
   res.json({ status: 'ok', message: 'Smart Task Manager API' });

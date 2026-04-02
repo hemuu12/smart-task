@@ -4,13 +4,20 @@ import { Pool } from 'pg';
 
 const PgSession = connectPgSimple(session);
 
-const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-});
+let pool: Pool | undefined;
 
-export const sessionConfig: session.SessionOptions = {
+const getPool = () => {
+  if (!pool) {
+    pool = new Pool({
+      connectionString: process.env.DATABASE_URL,
+    });
+  }
+  return pool;
+};
+
+export const getSessionConfig = (): session.SessionOptions => ({
   store: new PgSession({
-    pool,
+    pool: getPool(),
     tableName: 'session',
     createTableIfMissing: true,
   }),
@@ -23,4 +30,4 @@ export const sessionConfig: session.SessionOptions = {
     maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
     sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
   },
-};
+});
