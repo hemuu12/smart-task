@@ -39,6 +39,10 @@ function App() {
     }
   };
 
+  const handleLoginSuccess = () => {
+    setIsAuthenticated(true);
+  };
+
 
   if (!authChecked) {
     return (
@@ -97,7 +101,7 @@ function App() {
           />
           <Route 
             path="/login" 
-            element={!isAuthenticated ? <LoginPage /> : <Navigate to="/tasks" replace />} 
+            element={!isAuthenticated ? <LoginPage onLoginSuccess={handleLoginSuccess} /> : <Navigate to="/tasks" replace />} 
           />
           <Route 
             path="/signup" 

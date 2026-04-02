@@ -4,7 +4,11 @@ import { LogIn, Loader2 } from 'lucide-react';
 import { authService } from '../services/authService';
 import { LoginDto } from '../types/auth';
 
-export default function LoginPage() {
+interface LoginPageProps {
+  onLoginSuccess?: () => void;
+}
+
+export default function LoginPage({ onLoginSuccess }: LoginPageProps) {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -24,6 +28,7 @@ export default function LoginPage() {
         password: formData.password
       };
       await authService.login(data);
+      onLoginSuccess?.();
       navigate('/tasks');
     } catch (err: any) {
       setError(err.response?.data?.message || 'Login failed. Please try again.');
